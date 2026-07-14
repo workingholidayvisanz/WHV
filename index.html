@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHV Scripts — Nova Zelândia</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4f6f5;color:#1a1a1a;min-height:100vh}
+header{background:#0a2419;padding:18px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{color:#fff;font-size:1.15rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.logo-dot{width:9px;height:9px;background:#1D9E75;border-radius:50%}
+.hero{background:linear-gradient(135deg,#0a2419 0%,#0f3826 100%);padding:44px 40px 68px;text-align:center}
+.hero h1{font-size:2.2rem;color:#fff;margin-bottom:10px;font-weight:700;line-height:1.2}
+.hero h1 em{color:#4dd4a0;font-style:normal}
+.hero p{color:rgba(255,255,255,.6);font-size:1rem;max-width:460px;margin:0 auto}
+.container{max-width:740px;margin:-34px auto 60px;padding:0 20px}
+.progress{background:#fff;border-radius:14px 14px 0 0;padding:18px 24px;border-bottom:1px solid #e8ebe9;display:flex;align-items:flex-start;overflow-x:auto;gap:0}
+.prog-item{display:flex;align-items:flex-start;flex:1;min-width:0}
+.prog-col{display:flex;flex-direction:column;align-items:center;gap:3px}
+.prog-circle{width:28px;height:28px;border-radius:50%;border:2px solid #d4d4d4;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#bbb;flex-shrink:0;transition:all .25s;background:#fff}
+.prog-circle.active{border-color:#1D9E75;background:#1D9E75;color:#fff}
+.prog-circle.done{border-color:#1D9E75;background:#e6f7f2;color:#0c6e4f}
+.prog-circle.skip{border-color:#ececec;background:#fafafa;color:#ddd}
+.prog-label{font-size:.65rem;color:#bbb;white-space:nowrap;text-align:center;font-weight:500}
+.prog-label.active{color:#1D9E75;font-weight:700}
+.prog-label.skip{color:#ddd;text-decoration:line-through}
+.prog-line{flex:1;height:2px;background:#ececec;margin-top:14px;transition:background .25s}
+.prog-line.done{background:#1D9E75}
+.card{background:#fff;border-radius:0 0 14px 14px;padding:32px 34px;box-shadow:0 4px 20px rgba(0,0,0,.07)}
+.step{display:none}
+.step.active{display:block}
+.step-title{font-size:1.4rem;font-weight:700;margin-bottom:4px}
+.step-sub{color:#777;font-size:.88rem;margin-bottom:24px}
+.sec-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#1D9E75;margin:20px 0 10px;display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid.full{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+label{font-size:.74rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em}
+label .req{color:#e53e3e}
+input,select{border:1.5px solid #e0e0e0;border-radius:8px;padding:9px 12px;font-size:.9rem;font-family:inherit;color:#1a1a1a;background:#fff;transition:border-color .2s;outline:none;width:100%}
+input:focus,select:focus{border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+input.err{border-color:#e53e3e}
+.hint{font-size:.7rem;color:#aaa;margin-top:2px}
+hr.div{border:none;border-top:1px solid #f0f0f0;margin:18px 0}
+.q-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f3f3}
+.q-row:last-child{border-bottom:none}
+.q-text{font-size:.86rem;flex:1;padding-right:14px}
+.q-row select{width:86px;flex-shrink:0}
+.q-row.highlight{background:#f0faf5;border-radius:8px;padding:10px 10px;margin:5px -10px}
+.q-row.hidden{display:none}
+.alert{background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 15px;border-radius:8px;font-size:.83rem;color:#92400e;margin-bottom:18px}
+.footer{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:22px;border-top:1px solid #f0f0f0}
+.btn{padding:10px 24px;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-primary{background:#1D9E75;color:#fff}
+.btn-primary:hover{background:#18a66b;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:#666;border:1.5px solid #ddd}
+.btn-outline:hover{border-color:#999}
+.btn-submit{background:#0a2419;color:#fff;width:100%;padding:14px;font-size:1rem;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-weight:700;transition:all .2s;margin-top:8px}
+.btn-submit:hover{background:#162d20;transform:translateY(-1px)}
+.btn-submit:disabled{background:#aaa;cursor:not-allowed;transform:none}
+.review-block{background:#f9f9f9;border-radius:8px;padding:12px;margin-bottom:12px}
+.review-block-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#1D9E75;margin-bottom:8px}
+.review-table{width:100%;border-collapse:collapse;font-size:.84rem}
+.review-table td{padding:6px 8px;border-bottom:1px solid #f0f0f0}
+.review-table td:first-child{font-weight:600;color:#666;width:44%;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+.review-table tr:last-child td{border-bottom:none}
+.pay-box{background:#e8f4fd;border-left:4px solid #3b82f6;padding:14px 16px;border-radius:8px;font-size:.84rem;color:#1e3a5f;margin-bottom:20px;line-height:1.6}
+.pay-box strong{display:block;margin-bottom:4px;font-size:.9rem}
+.err-msg{background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:12px 14px;font-size:.83rem;color:#c53030;margin-top:12px;display:none}
+.success-screen{text-align:center;padding:20px 0 10px}
+.success-icon{width:72px;height:72px;background:#e6f7f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem}
+.success-title{font-size:1.5rem;font-weight:700;margin-bottom:8px}
+.success-sub{color:#666;font-size:.9rem;max-width:380px;margin:0 auto 24px;line-height:1.6}
+.success-steps{text-align:left;background:#f9f9f9;border-radius:10px;padding:18px 20px;max-width:420px;margin:0 auto}
+.ss{display:flex;gap:12px;margin-bottom:12px;font-size:.85rem;line-height:1.5}
+.ss:last-child{margin-bottom:0}
+.ss-num{width:24px;height:24px;border-radius:50%;background:#1D9E75;color:#fff;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.hero h1{font-size:1.6rem}.card{padding:22px 18px}header{padding:14px 20px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div> WHV Scripts — NZ</div>
+  <span style="color:rgba(255,255,255,.35);font-size:.8rem">🇳🇿 Working Holiday Visa</span>
+</header>
+
+<div class="hero">
+  <h1>Automação WHV<br><em>Nova Zelândia</em></h1>
+  <p>Preencha seus dados e receba os scripts após confirmação do pagamento</p>
+</div>
+
+<div class="container">
+  <div class="progress" id="progressBar"></div>
+
+  <div class="card">
+
+    <!-- STEP 1: Contato + Pessoal -->
+    <div class="step active" id="s1">
+      <div class="step-title">Dados Pessoais</div>
+      <div class="step-sub">Seus dados de contato e informações pessoais</div>
+
+      <span class="sec-label">Contato</span>
+      <div class="grid full">
+        <div class="fg">
+          <label for="customerEmail">Seu e-mail <span class="req">*</span></label>
+          <input id="customerEmail" type="email" placeholder="seuemail@exemplo.com">
+          <span class="hint">Os scripts serão enviados para este endereço após o pagamento</span>
+        </div>
+      </div>
+
+      <hr class="div">
+      <span class="sec-label">Identidade</span>
+      <div class="grid">
+        <div class="fg"><label for="familyName">Sobrenome (Family Name) <span class="req">*</span></label><input id="familyName" type="text" placeholder="Como no passaporte"></div>
+        <div class="fg"><label for="givenName">Nome (Given Name) <span class="req">*</span></label><input id="givenName" type="text" placeholder="Como no passaporte"></div>
+        <div class="fg">
+          <label for="gender">Gênero <span class="req">*</span></label>
+          <select id="gender" onchange="onGenderChange()">
+            <option value="F">Feminino (F)</option>
+            <option value="M">Masculino (M)</option>
+          </select>
+        </div>
+        <div class="fg"><label for="dob">Data de Nascimento <span class="req">*</span></label><input id="dob" type="date"></div>
+      </div>
+      <div class="fg" style="margin-bottom:14px">
+        <label for="natCode">País de Nacionalidade <span class="req">*</span></label>
+        <select id="natCode"></select>
+      </div>
+
+      <hr class="div">
+      <span class="sec-label">Endereço Atual</span>
+      <div class="grid full"><div class="fg"><label for="addr1">Endereço Linha 1 <span class="req">*</span></label><input id="addr1" type="text" placeholder="Número e nome da rua"></div></div>
+      <div class="grid">
+        <div class="fg"><label for="suburb">Bairro / Suburb</label><input id="suburb" type="text"></div>
+        <div class="fg"><label for="city">Cidade <span class="req">*</span></label><input id="city" type="text"></div>
+        <div class="fg"><label for="state">Estado / Região</label><input id="state" type="text"></div>
+        <div class="fg">
+          <label for="addrCode">País do Endereço <span class="req">*</span></label>
+          <select id="addrCode" onchange="onAddrCountryChange()"></select>
+        </div>
+      </div>
+
+      <hr class="div">
+      <span class="sec-label">Outras informações</span>
+      <div class="grid">
+        <div class="fg"><label for="hasAgent">Representado por agente?</label><select id="hasAgent"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+        <div class="fg"><label for="hasCreditCard">Tem cartão de crédito?</label><select id="hasCreditCard"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
+      </div>
+
+      <div class="footer"><span></span><button class="btn btn-primary" onclick="validateAndGo(1,2)">Próximo →</button></div>
+    </div>
+
+    <!-- STEP 2: Identificação -->
+    <div class="step" id="s2">
+      <div class="step-title">Identificação</div>
+      <div class="step-sub">Passaporte e documento de identidade</div>
+      <span class="sec-label">Passaporte</span>
+      <div class="grid">
+        <div class="fg"><label for="passportNum">Número do Passaporte <span class="req">*</span></label><input id="passportNum" type="text" placeholder="Ex: GF291226"></div>
+        <div class="fg"><label for="passportExp">Data de Expiração <span class="req">*</span></label><input id="passportExp" type="date"></div>
+      </div>
+      <hr class="div">
+      <span class="sec-label">Outro Documento</span>
+      <div class="grid">
+        <div class="fg"><label for="otherIdType">Tipo</label><select id="otherIdType"><option value="3">Identidade Nacional (RG)</option><option value="1">Carteira de Motorista</option><option value="2">Outro</option></select></div>
+        <div class="fg"><label for="otherIdDate">Data de Emissão <span class="req">*</span></label><input id="otherIdDate" type="date"></div>
+      </div>
+      <div class="footer"><button class="btn btn-outline" onclick="go(1)">← Voltar</button><button class="btn btn-primary" onclick="validateAndGo(2,'visa')">Próximo →</button></div>
+    </div>
+
+    <!-- STEP 3: Visto (só se endereço = NZ) -->
+    <div class="step" id="s3">
+      <div class="step-title">Detalhes do Visto Atual</div>
+      <div class="step-sub">Informações sobre sua situação na Nova Zelândia</div>
+      <div class="grid">
+        <div class="fg"><label for="arrivalDate">Data de Chegada à NZ <span class="req">*</span></label><input id="arrivalDate" type="date"></div>
+        <div class="fg"><label for="visaExpiry">Expiração do Visto <span class="req">*</span></label><input id="visaExpiry" type="date"></div>
+      </div>
+      <div class="fg" style="margin-bottom:14px">
+        <label for="permitType">Tipo de Permissão Atual</label>
+        <select id="permitType" style="max-width:240px">
+          <option value="1">Visitor (Turista)</option>
+          <option value="2">Work</option>
+          <option value="3">Student</option>
+        </select>
+      </div>
+      <div class="footer"><button class="btn btn-outline" onclick="go(2)">← Voltar</button><button class="btn btn-primary" onclick="go(4)">Próximo →</button></div>
+    </div>
+
+    <!-- STEP 4: Saúde -->
+    <div class="step" id="s4">
+      <div class="step-title">Saúde</div>
+      <div class="step-sub">Responda conforme declarará no formulário oficial</div>
+      <div class="alert">⚠️ Para cidadãos brasileiros o campo <strong>Risco de TB</strong> deve ser <strong>Sim</strong>.</div>
+      <div class="q-row"><span class="q-text">Faz ou precisará de diálise renal?</span><select id="h_renal"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Tem ou teve tuberculose?</span><select id="h_tb"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Tem ou teve câncer?</span><select id="h_cancer"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Tem ou teve doença cardíaca?</span><select id="h_heart"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Tem alguma deficiência física ou mental?</span><select id="h_disability"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Foi hospitalizado por +24h nos últimos 5 anos?</span><select id="h_hosp"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Está ou precisará de cuidados residenciais?</span><select id="h_rescare"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row highlight"><span class="q-text" style="font-weight:700;color:#0a5438">🦠 Risco de TB — viveu em país de alto risco?</span><select id="h_tbRisk"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
+      <div class="q-row hidden" id="rowPreg"><span class="q-text">Está grávida?</span><select id="h_preg"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="footer"><button class="btn btn-outline" onclick="goBack4()">← Voltar</button><button class="btn btn-primary" onclick="go(5)">Próximo →</button></div>
+    </div>
+
+    <!-- STEP 5: Caráter -->
+    <div class="step" id="s5">
+      <div class="step-title">Caráter</div>
+      <div class="step-sub">Histórico criminal e legal</div>
+      <div class="q-row"><span class="q-text">Foi preso ou sentenciado a 5+ anos?</span><select id="c_imp5"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Foi preso por 12+ meses?</span><select id="c_imp12"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Foi deportado de algum país?</span><select id="c_dep"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Foi indiciado por algum crime?</span><select id="c_charged"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Foi condenado por algum crime?</span><select id="c_convicted"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Está sob investigação por algum crime?</span><select id="c_invest"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Foi excluído de entrada em algum país?</span><select id="c_excl"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Foi removido ou pedido para sair de algum país?</span><select id="c_removed"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="footer"><button class="btn btn-outline" onclick="go(4)">← Voltar</button><button class="btn btn-primary" onclick="go(6)">Próximo →</button></div>
+    </div>
+
+    <!-- STEP 6: WHV -->
+    <div class="step" id="s6">
+      <div class="step-title">Específico WHV</div>
+      <div class="step-sub">Perguntas finais do Working Holiday Visa</div>
+      <div class="q-row"><span class="q-text">Já teve um WHV para NZ antes?</span><select id="w_prev"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="q-row"><span class="q-text">Tem fundos suficientes para férias? (mín. NZD $4.200)</span><select id="w_funds"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
+      <div class="q-row"><span class="q-text">Tem fundos suficientes ou passagem de volta?</span><select id="w_onward"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
+      <div class="q-row"><span class="q-text">Leu e cumpre todos os requisitos do WHV?</span><select id="w_readReq"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
+      <div class="footer"><button class="btn btn-outline" onclick="go(5)">← Voltar</button><button class="btn btn-primary" onclick="go(7)">Revisar →</button></div>
+    </div>
+
+    <!-- STEP 7: Revisão + Envio -->
+    <div class="step" id="s7">
+      <div class="step-title">Confirmar e Enviar</div>
+      <div class="step-sub">Revise seus dados antes de finalizar</div>
+      <div class="pay-box">
+        <strong>💳 Como funciona o pagamento?</strong>
+        Após enviar, entraremos em contato no e-mail <strong id="reviewEmail">—</strong> com as instruções. Assim que o pagamento for confirmado, os scripts serão enviados para você.
+      </div>
+      <div id="reviewContent"></div>
+      <button class="btn-submit" id="btnSubmit" onclick="submitForm()">Enviar meus dados</button>
+      <div class="err-msg" id="errMsg"></div>
+      <div class="footer"><button class="btn btn-outline" onclick="go(6)">← Voltar</button><span></span></div>
+    </div>
+
+    <!-- STEP 8: Sucesso -->
+    <div class="step" id="s8">
+      <div class="success-screen">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Dados enviados com sucesso!</div>
+        <div class="success-sub">Recebemos suas informações. Em breve entraremos em contato no seu e-mail.</div>
+        <div class="success-steps">
+          <div class="ss"><div class="ss-num">1</div><div>Você receberá um e-mail com as instruções de pagamento em até <strong>24 horas</strong>.</div></div>
+          <div class="ss"><div class="ss-num">2</div><div>Após confirmar o pagamento, os <strong>7 scripts WHV</strong> serão enviados para você.</div></div>
+          <div class="ss"><div class="ss-num">3</div><div>Importe os scripts no <strong>UI.Vision</strong> conforme o guia que acompanha o arquivo.</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ⚙️  Cole aqui a URL do seu Google Apps Script após o deploy
+// ============================================================
+var APPS_SCRIPT_URL = 'COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT';
+
+// ============================================================
+// PAÍSES (só para exibição — os valores numéricos vão no payload)
+// ============================================================
+var COUNTRIES = [
+  {v:'4',l:'Afghanistan'},{v:'5',l:'Albania'},{v:'6',l:'Algeria'},{v:'7',l:'American Samoa'},
+  {v:'8',l:'Andorra'},{v:'9',l:'Angola'},{v:'10',l:'Anguilla'},{v:'11',l:'Antarctica'},
+  {v:'12',l:'Antigua & Barbuda'},{v:'13',l:'Argentina'},{v:'14',l:'Armenia'},{v:'15',l:'Aruba'},
+  {v:'16',l:'Australia'},{v:'17',l:'Austria'},{v:'18',l:'Azerbaijan'},{v:'19',l:'Bahamas'},
+  {v:'20',l:'Bahrain'},{v:'21',l:'Bangladesh'},{v:'22',l:'Barbados'},{v:'23',l:'Belarus'},
+  {v:'24',l:'Belgium'},{v:'25',l:'Belize'},{v:'26',l:'Benin'},{v:'27',l:'Bermuda'},
+  {v:'28',l:'Bhutan'},{v:'29',l:'Bolivia'},{v:'252',l:'Bonaire, Sint Eustatius & Saba'},
+  {v:'30',l:'Bosnia & Herzegovina'},{v:'31',l:'Botswana'},{v:'32',l:'Brazil'},
+  {v:'33',l:'British Indian Ocean Territory'},{v:'34',l:'Brunei Darussalam'},{v:'35',l:'Bulgaria'},
+  {v:'36',l:'Burkina Faso'},{v:'37',l:'Burundi'},{v:'38',l:'Cambodia'},{v:'39',l:'Cameroon'},
+  {v:'40',l:'Canada'},{v:'41',l:'Cape Verde'},{v:'42',l:'Cayman Islands'},
+  {v:'43',l:'Central African Republic'},{v:'44',l:'Chad'},{v:'45',l:'Chile'},{v:'46',l:'China'},
+  {v:'47',l:'Christmas Island'},{v:'48',l:'Cocos (Keeling) Island'},{v:'49',l:'Colombia'},
+  {v:'50',l:'Comoros'},{v:'51',l:'Congo'},{v:'52',l:'Cook Islands'},{v:'53',l:'Costa Rica'},
+  {v:'54',l:'Croatia'},{v:'55',l:'Cuba'},{v:'253',l:'Curacao'},{v:'56',l:'Cyprus'},
+  {v:'57',l:'Czech Republic'},{v:'58',l:'Democratic Republic of Congo'},{v:'59',l:'Denmark'},
+  {v:'60',l:'Djibouti'},{v:'61',l:'Dominica'},{v:'62',l:'Dominican Republic'},
+  {v:'63',l:'East Timor'},{v:'64',l:'Ecuador'},{v:'65',l:'Egypt'},{v:'66',l:'El Salvador'},
+  {v:'67',l:'Equitorial Guinea'},{v:'68',l:'Eritrea'},{v:'69',l:'Estonia'},{v:'70',l:'Ethiopia'},
+  {v:'71',l:'Faeroe Islands'},{v:'72',l:'Falkland Islands'},
+  {v:'73',l:'Federated States of Micronesia'},{v:'74',l:'Fiji'},{v:'75',l:'Finland'},
+  {v:'76',l:'France'},{v:'77',l:'French Guiana'},{v:'78',l:'French Polynesia'},
+  {v:'79',l:'Gabon'},{v:'80',l:'Gambia'},{v:'81',l:'Georgia'},{v:'82',l:'Germany'},
+  {v:'83',l:'Ghana'},{v:'84',l:'Gibraltar'},{v:'85',l:'Great Britain'},{v:'86',l:'Greece'},
+  {v:'87',l:'Greenland'},{v:'88',l:'Grenada'},{v:'89',l:'Guadeloupe'},{v:'90',l:'Guam'},
+  {v:'91',l:'Guatemala'},{v:'92',l:'Guinea'},{v:'93',l:'Guinea - Bissau'},{v:'94',l:'Guyana'},
+  {v:'95',l:'Haiti'},{v:'96',l:'Honduras'},{v:'97',l:'Hong Kong'},{v:'98',l:'Hungary'},
+  {v:'99',l:'Iceland'},{v:'100',l:'India'},{v:'101',l:'Indonesia'},{v:'102',l:'Iran'},
+  {v:'103',l:'Iraq'},{v:'104',l:'Ireland'},{v:'105',l:'Israel'},{v:'106',l:'Italy'},
+  {v:'107',l:'Ivory Coast'},{v:'108',l:'Jamaica'},{v:'109',l:'Japan'},{v:'110',l:'Jordan'},
+  {v:'111',l:'Kazakhstan'},{v:'112',l:'Kenya'},{v:'113',l:'Kiribati'},
+  {v:'114',l:'Kosovo - UN Mission in'},{v:'250',l:'Kosovo - Republic of'},{v:'115',l:'Kuwait'},
+  {v:'116',l:'Kyrgyzstan'},{v:'117',l:'Laos'},{v:'118',l:'Latvia'},{v:'119',l:'Lebanon'},
+  {v:'120',l:'Lesotho'},{v:'121',l:'Liberia'},{v:'122',l:'Libya'},{v:'123',l:'Liechtenstein'},
+  {v:'124',l:'Lithuania'},{v:'125',l:'Luxembourg'},{v:'126',l:'Macau'},{v:'127',l:'Macedonia'},
+  {v:'128',l:'Madagascar'},{v:'129',l:'Malawi'},{v:'130',l:'Malaysia'},{v:'131',l:'Maldives'},
+  {v:'132',l:'Mali'},{v:'133',l:'Malta'},{v:'134',l:'Marshall Islands'},{v:'135',l:'Martinique'},
+  {v:'136',l:'Mauritania'},{v:'137',l:'Mauritius'},{v:'138',l:'Mayotte'},{v:'139',l:'Mexico'},
+  {v:'140',l:'Moldova'},{v:'141',l:'Monaco'},{v:'142',l:'Mongolia'},{v:'248',l:'Montenegro'},
+  {v:'143',l:'Montserrat'},{v:'144',l:'Morocco'},{v:'145',l:'Mozambique'},{v:'146',l:'Myanmar'},
+  {v:'147',l:'Namibia'},{v:'148',l:'Nauru'},{v:'149',l:'Nepal'},{v:'150',l:'Netherlands'},
+  {v:'151',l:'Netherlands Antilles'},{v:'152',l:'New Caledonia'},{v:'153',l:'New Zealand'},
+  {v:'154',l:'Nicaragua'},{v:'155',l:'Niger'},{v:'156',l:'Nigeria'},{v:'157',l:'Niue'},
+  {v:'158',l:'Norfolk Island'},{v:'159',l:'North Korea'},{v:'160',l:'Northern Mariana Islands'},
+  {v:'161',l:'Norway'},{v:'162',l:'Oman'},{v:'163',l:'Pacific Island Trust Territory'},
+  {v:'164',l:'Pakistan'},{v:'165',l:'Palau'},{v:'166',l:'Palestine'},{v:'167',l:'Panama'},
+  {v:'168',l:'Papua New Guinea'},{v:'169',l:'Paraguay'},{v:'170',l:'Peru'},
+  {v:'171',l:'Philippines'},{v:'172',l:'Pitcairn Islands'},{v:'173',l:'Poland'},
+  {v:'174',l:'Portugal'},{v:'175',l:'Puerto Rico'},{v:'176',l:'Qatar'},{v:'177',l:'Reunion'},
+  {v:'178',l:'Romania'},{v:'179',l:'Russia'},{v:'180',l:'Rwanda'},{v:'181',l:'Samoa'},
+  {v:'182',l:'San Marino'},{v:'183',l:'Sao Tome & Principe'},{v:'184',l:'Saudi Arabia'},
+  {v:'185',l:'Senegal'},{v:'247',l:'Serbia'},{v:'249',l:'Serbia & Montenegro'},
+  {v:'186',l:'Seychelles'},{v:'187',l:'Sierra Leone'},{v:'188',l:'Singapore'},
+  {v:'254',l:'Sint Maarten'},{v:'189',l:'Slovakia'},{v:'190',l:'Slovenia'},
+  {v:'191',l:'Solomon Islands'},{v:'192',l:'Somalia'},{v:'193',l:'South Africa'},
+  {v:'194',l:'South Korea'},{v:'195',l:'South Pacific commission'},{v:'251',l:'South Sudan'},
+  {v:'196',l:'Soviet Union'},{v:'197',l:'Spain'},{v:'198',l:'Sri Lanka'},
+  {v:'199',l:'St Helena'},{v:'200',l:'St Kitts - Nevis'},{v:'201',l:'St Lucia'},
+  {v:'202',l:'St Pierre & Miquelon'},{v:'203',l:'St Vincent and the Grenadines'},
+  {v:'204',l:'Sth Georgia & Sandwich Islands'},{v:'205',l:'Sudan'},{v:'206',l:'Suriname'},
+  {v:'207',l:'Swaziland'},{v:'208',l:'Sweden'},{v:'209',l:'Switzerland'},{v:'210',l:'Syria'},
+  {v:'211',l:'Taiwan'},{v:'212',l:'Tajikistan'},{v:'213',l:'Tanzania'},{v:'214',l:'Thailand'},
+  {v:'215',l:'Timor Leste'},{v:'216',l:'Togo'},{v:'217',l:'Tokelau'},{v:'218',l:'Tonga'},
+  {v:'219',l:'Trinidad and Tobago'},{v:'220',l:'Tunisia'},{v:'221',l:'Turkemenistan'},
+  {v:'222',l:'Turkey'},{v:'223',l:'Turks and Caicos Islands'},{v:'224',l:'Tuvalu'},
+  {v:'225',l:'Uganda'},{v:'226',l:'Ukraine'},{v:'227',l:'United Arab Emirates'},
+  {v:'228',l:'United Nations'},{v:'229',l:'United States of America'},{v:'230',l:'Uruguay'},
+  {v:'231',l:'US Outlying Islands'},{v:'232',l:'US Pacific Islands'},{v:'233',l:'Uzbekistan'},
+  {v:'234',l:'Vanuatu'},{v:'235',l:'Vatican City'},{v:'236',l:'Venezuela'},
+  {v:'237',l:'Vietnam'},{v:'238',l:'Virgin Islands, British'},{v:'239',l:'Virgin Islands, USA'},
+  {v:'240',l:'Wallis and Futuna'},{v:'241',l:'Western Sahara'},{v:'242',l:'Yemen'},
+  {v:'243',l:'Yugoslavia'},{v:'244',l:'Zambia'},{v:'245',l:'Zimbabwe'}
+];
+
+var NZ_CODE = '153';
+var cur = 1;
+var TOTAL = 8;
+var stepNames = ['Pessoal','Identif.','Visto','Saúde','Caráter','WHV','Revisar','Enviado'];
+
+// ============================================================
+// INIT
+// ============================================================
+(function() {
+  populateSelect('natCode', '32');      // Brazil
+  populateSelect('addrCode', NZ_CODE);  // New Zealand
+  renderProgress();
+  onGenderChange();
+})();
+
+function populateSelect(id, def) {
+  var sel = document.getElementById(id);
+  COUNTRIES.forEach(function(c) {
+    var o = document.createElement('option');
+    o.value = c.v;
+    o.textContent = c.l;
+    if (c.v === def) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+function countryName(code) {
+  var c = COUNTRIES.find(function(x) { return x.v === code; });
+  return c ? c.l : code;
+}
+
+// ============================================================
+// LÓGICA CONDICIONAL
+// ============================================================
+function onGenderChange() {
+  var male = document.getElementById('gender').value === 'M';
+  var row = document.getElementById('rowPreg');
+  if (male) { row.classList.add('hidden'); document.getElementById('h_preg').value = 'No'; }
+  else { row.classList.remove('hidden'); }
+}
+
+function isInNZ() { return document.getElementById('addrCode').value === NZ_CODE; }
+
+function onAddrCountryChange() { renderProgress(); }
+
+function goBack4() { go(isInNZ() ? 3 : 2); }
+
+// ============================================================
+// PROGRESSO
+// ============================================================
+function renderProgress() {
+  var inNZ = isInNZ();
+  var h = '';
+  for (var i = 0; i < TOTAL; i++) {
+    var n = i + 1;
+    var sk = n === 3 && !inNZ;
+    var cc = sk ? 'skip' : (n < cur ? 'done' : n === cur ? 'active' : '');
+    var lc = !sk && n < cur ? 'done' : '';
+    var lbl = n === cur ? 'active' : (sk ? 'skip' : '');
+    h += '<div class="prog-item"><div class="prog-col">';
+    h += '<div class="prog-circle ' + cc + '">' + (n < cur && !sk ? '✓' : n) + '</div>';
+    h += '<div class="prog-label ' + lbl + '">' + stepNames[i] + '</div></div>';
+    if (n < TOTAL) h += '<div class="prog-line ' + lc + '"></div>';
+    h += '</div>';
+  }
+  document.getElementById('progressBar').innerHTML = h;
+}
+
+function go(n) {
+  document.getElementById('s' + cur).classList.remove('active');
+  cur = n;
+  document.getElementById('s' + cur).classList.add('active');
+  if (n === 7) buildReview();
+  renderProgress();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Navegação do step 2 para 3 ou 4
+function validateAndGo(from, to) {
+  var required = {
+    1: ['customerEmail','familyName','givenName','dob','addr1','city'],
+    2: ['passportNum','passportExp','otherIdDate']
+  };
+  var fields = required[from] || [];
+  var ok = true;
+  fields.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && !el.value.trim()) { el.classList.add('err'); ok = false; }
+    else if (el) el.classList.remove('err');
+  });
+  if (!ok) { window.scrollTo({top:0,behavior:'smooth'}); return; }
+  if (to === 'visa') { go(isInNZ() ? 3 : 4); } else { go(to); }
+}
+
+// ============================================================
+// TELA DE REVISÃO (sem lógica de negócio — só exibição)
+// ============================================================
+function rv(id) { var e = document.getElementById(id); return e ? (e.value || '—') : '—'; }
+
+function buildReview() {
+  document.getElementById('reviewEmail').textContent = rv('customerEmail');
+  var inNZ = isInNZ();
+  var isFemale = rv('gender') !== 'M';
+  var html = '';
+
+  function block(title, rows) {
+    html += '<div class="review-block"><div class="review-block-title">' + title + '</div>';
+    html += '<table class="review-table">';
+    rows.forEach(function(r) { html += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; });
+    html += '</table></div>';
+  }
+
+  block('📧 Contato', [['E-mail', rv('customerEmail')]]);
+  block('👤 Identidade', [
+    ['Sobrenome', rv('familyName')], ['Nome', rv('givenName')],
+    ['Gênero', rv('gender') === 'F' ? 'Feminino' : 'Masculino'],
+    ['Nascimento', rv('dob')], ['Nacionalidade', countryName(rv('natCode'))]
+  ]);
+  block('📍 Endereço', [
+    ['Endereço', rv('addr1')], ['Bairro', rv('suburb') || '—'],
+    ['Cidade', rv('city')], ['Estado', rv('state') || '—'],
+    ['País', countryName(rv('addrCode'))]
+  ]);
+  block('🪪 Passaporte', [
+    ['Número', rv('passportNum')], ['Expiração', rv('passportExp')],
+    ['Outro doc.', rv('otherIdType') === '3' ? 'RG' : rv('otherIdType') === '1' ? 'CNH' : 'Outro'],
+    ['Emissão doc.', rv('otherIdDate')]
+  ]);
+  if (inNZ) {
+    block('✈️ Visto Atual (NZ)', [
+      ['Chegada NZ', rv('arrivalDate')], ['Expiração', rv('visaExpiry')],
+      ['Tipo', {'1':'Visitor','2':'Work','3':'Student'}[rv('permitType')] || rv('permitType')]
+    ]);
+  }
+  document.getElementById('reviewContent').innerHTML = html;
+}
+
+// ============================================================
+// SUBMIT — envia apenas dados brutos para o Apps Script
+// A geração dos JSONs acontece lá, não aqui
+// ============================================================
+async function submitForm() {
+  var btn = document.getElementById('btnSubmit');
+  var err = document.getElementById('errMsg');
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Enviando...';
+
+  try {
+    // Coleta todos os campos do formulário como dados brutos
+    var payload = {
+      customerEmail:  document.getElementById('customerEmail').value.trim(),
+      familyName:     document.getElementById('familyName').value.trim(),
+      givenName:      document.getElementById('givenName').value.trim(),
+      gender:         document.getElementById('gender').value,
+      dob:            document.getElementById('dob').value,
+      natCode:        document.getElementById('natCode').value,
+      nationality:    countryName(document.getElementById('natCode').value),
+      addr1:          document.getElementById('addr1').value.trim(),
+      suburb:         document.getElementById('suburb').value.trim(),
+      city:           document.getElementById('city').value.trim(),
+      state:          document.getElementById('state').value.trim(),
+      addrCode:       document.getElementById('addrCode').value,
+      addressCountry: countryName(document.getElementById('addrCode').value),
+      hasAgent:       document.getElementById('hasAgent').value,
+      hasCreditCard:  document.getElementById('hasCreditCard').value,
+      passportNum:    document.getElementById('passportNum').value.trim(),
+      passportExp:    document.getElementById('passportExp').value,
+      otherIdType:    document.getElementById('otherIdType').value,
+      otherIdDate:    document.getElementById('otherIdDate').value,
+      inNZ:           isInNZ(),
+      arrivalDate:    document.getElementById('arrivalDate').value,
+      visaExpiry:     document.getElementById('visaExpiry').value,
+      permitType:     document.getElementById('permitType').value,
+      h_renal:        document.getElementById('h_renal').value,
+      h_tb:           document.getElementById('h_tb').value,
+      h_cancer:       document.getElementById('h_cancer').value,
+      h_heart:        document.getElementById('h_heart').value,
+      h_disability:   document.getElementById('h_disability').value,
+      h_hosp:         document.getElementById('h_hosp').value,
+      h_rescare:      document.getElementById('h_rescare').value,
+      h_tbRisk:       document.getElementById('h_tbRisk').value,
+      h_preg:         document.getElementById('h_preg').value,
+      c_imp5:         document.getElementById('c_imp5').value,
+      c_imp12:        document.getElementById('c_imp12').value,
+      c_dep:          document.getElementById('c_dep').value,
+      c_charged:      document.getElementById('c_charged').value,
+      c_convicted:    document.getElementById('c_convicted').value,
+      c_invest:       document.getElementById('c_invest').value,
+      c_excl:         document.getElementById('c_excl').value,
+      c_removed:      document.getElementById('c_removed').value,
+      w_prev:         document.getElementById('w_prev').value,
+      w_funds:        document.getElementById('w_funds').value,
+      w_onward:       document.getElementById('w_onward').value,
+      w_readReq:      document.getElementById('w_readReq').value,
+      submittedAt:    new Date().toISOString()
+    };
+
+    // POST para o Apps Script — só dados, sem ZIP, sem lógica
+    var resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain'}, // evita preflight CORS
+      body: JSON.stringify(payload)
+    });
+
+    var result = await resp.json();
+    if (result.ok) {
+      go(8);
+    } else {
+      throw new Error(result.error || 'Erro desconhecido do servidor');
+    }
+
+  } catch (e) {
+    err.textContent = '❌ ' + e.message + '. Verifique sua conexão e tente novamente.';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Enviar meus dados';
+  }
+}
+</script>
+</body>
+</html>
