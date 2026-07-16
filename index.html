@@ -418,8 +418,13 @@ function toggleWhvOffshoreFields() {
 }
 
 function onBeenToNzChange() {
-  var yes = document.getElementById('w_beenToNz').value === 'Yes';
-  document.getElementById('rowWhenInNZ').classList.toggle('hidden', !yes || isInNZ());
+  var show = document.getElementById('w_beenToNz').value === 'Yes' && !isInNZ();
+  document.getElementById('rowWhenInNZ').classList.toggle('hidden', !show);
+  if (show) {
+    var input = document.getElementById('w_whenInNZ');
+    input.focus();
+    if (input.showPicker) input.showPicker();
+  }
 }
 
 function goBack4() { go(isInNZ() ? 3 : 2); }
