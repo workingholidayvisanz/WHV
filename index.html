@@ -49,6 +49,7 @@ hr.div{border:none;border-top:1px solid #f0f0f0;margin:18px 0}
 .q-row select{width:86px;flex-shrink:0}
 .q-row.highlight{background:#f0faf5;border-radius:8px;padding:10px 10px;margin:5px -10px}
 .q-row.hidden{display:none}
+.hidden{display:none}
 .alert{background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 15px;border-radius:8px;font-size:.83rem;color:#92400e;margin-bottom:18px}
 .footer{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:22px;border-top:1px solid #f0f0f0}
 .btn{padding:10px 24px;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
@@ -229,6 +230,15 @@ hr.div{border:none;border-top:1px solid #f0f0f0;margin:18px 0}
       <div class="step-sub">Perguntas finais do Working Holiday Visa</div>
       <div class="q-row"><span class="q-text">Já teve um WHV para NZ antes?</span><select id="w_prev"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
       <div class="q-row"><span class="q-text">Tem fundos suficientes para férias? (mín. NZD $4.200)</span><select id="w_funds"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
+      <div class="fg hidden" id="rowTravelDate" style="margin-bottom:14px">
+        <label for="w_travelDate">Data pretendida de viagem para NZ <span class="req">*</span></label>
+        <input id="w_travelDate" type="date">
+      </div>
+      <div class="q-row hidden" id="rowBeenToNz"><span class="q-text">Já esteve na NZ antes?</span><select id="w_beenToNz" onchange="onBeenToNzChange()"><option value="No">Não</option><option value="Yes">Sim</option></select></div>
+      <div class="fg hidden" id="rowWhenInNZ" style="margin-bottom:14px">
+        <label for="w_whenInNZ">Se sim, quando esteve na NZ?</label>
+        <input id="w_whenInNZ" type="date">
+      </div>
       <div class="q-row"><span class="q-text">Tem fundos suficientes ou passagem de volta?</span><select id="w_onward"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
       <div class="q-row"><span class="q-text">Leu e cumpre todos os requisitos do WHV?</span><select id="w_readReq"><option value="Yes">Sim</option><option value="No">Não</option></select></div>
       <div class="footer"><button class="btn btn-outline" onclick="go(5)">← Voltar</button><button class="btn btn-primary" onclick="go(7)">Revisar →</button></div>
@@ -362,6 +372,7 @@ var stepNames = ['Pessoal','Identif.','Visto','Saúde','Caráter','WHV','Revisar
   populateSelect('addrCode', NZ_CODE);  // New Zealand
   renderProgress();
   onGenderChange();
+  toggleWhvOffshoreFields();
 })();
 
 function populateSelect(id, def) {
@@ -392,7 +403,24 @@ function onGenderChange() {
 
 function isInNZ() { return document.getElementById('addrCode').value === NZ_CODE; }
 
-function onAddrCountryChange() { renderProgress(); }
+function onAddrCountryChange() { renderProgress(); toggleWhvOffshoreFields(); }
+
+function toggleWhvOffshoreFields() {
+  var offshore = !isInNZ();
+  document.getElementById('rowTravelDate').classList.toggle('hidden', !offshore);
+  document.getElementById('rowBeenToNz').classList.toggle('hidden', !offshore);
+  if (!offshore) {
+    document.getElementById('w_beenToNz').value = 'No';
+    document.getElementById('rowWhenInNZ').classList.add('hidden');
+  } else {
+    onBeenToNzChange();
+  }
+}
+
+function onBeenToNzChange() {
+  var yes = document.getElementById('w_beenToNz').value === 'Yes';
+  document.getElementById('rowWhenInNZ').classList.toggle('hidden', !yes || isInNZ());
+}
 
 function goBack4() { go(isInNZ() ? 3 : 2); }
 
@@ -542,6 +570,9 @@ async function submitForm() {
       c_removed:      document.getElementById('c_removed').value,
       w_prev:         document.getElementById('w_prev').value,
       w_funds:        document.getElementById('w_funds').value,
+      w_travelDate:   document.getElementById('w_travelDate').value,
+      w_beenToNz:     document.getElementById('w_beenToNz').value,
+      w_whenInNZ:     document.getElementById('w_whenInNZ').value,
       w_onward:       document.getElementById('w_onward').value,
       w_readReq:      document.getElementById('w_readReq').value,
       submittedAt:    new Date().toISOString()
