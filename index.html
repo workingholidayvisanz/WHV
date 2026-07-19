@@ -94,7 +94,22 @@ hr.div{border:none;border-top:1px solid #f0f0f0;margin:18px 0}
   <p>Preencha seus dados e receba os scripts após confirmação do pagamento</p>
 </div>
 
-<div class="container">
+<div class="container" id="introScreen">
+  <div class="card" style="border-radius:14px">
+    <div class="step-title">Antes de começar</div>
+    <div class="step-sub">Leia com atenção — essas informações serão usadas para preencher automaticamente sua aplicação oficial de visto</div>
+    <div class="alert">⚠️ Preencha tudo exatamente como está no seu passaporte e documentos. Dados incorretos podem causar problemas na sua aplicação de visto junto à Imigração da Nova Zelândia.</div>
+    <div class="success-steps" style="max-width:100%;margin-top:20px">
+      <div class="ss"><div class="ss-num">1</div><div>Preencha seus dados pessoais, passaporte, saúde e histórico — leva cerca de 10 minutos.</div></div>
+      <div class="ss"><div class="ss-num">2</div><div>Envie o formulário. Você recebe instruções de pagamento por e-mail em até 24h.</div></div>
+      <div class="ss"><div class="ss-num">3</div><div>Após o pagamento, você recebe sua chave de licença e o link da extensão Chrome.</div></div>
+      <div class="ss"><div class="ss-num">4</div><div>Instale a extensão, digite a chave, e ela preenche automaticamente o formulário oficial da Imigração NZ pra você.</div></div>
+    </div>
+    <button class="btn-submit" onclick="startForm()">Iniciar Formulário →</button>
+  </div>
+</div>
+
+<div class="container" id="formContainer" style="display:none">
   <div class="progress" id="progressBar"></div>
 
   <div class="card">
@@ -399,6 +414,12 @@ function onGenderChange() {
   var row = document.getElementById('rowPreg');
   if (male) { row.classList.add('hidden'); document.getElementById('h_preg').value = 'No'; }
   else { row.classList.remove('hidden'); }
+}
+
+function startForm() {
+  document.getElementById('introScreen').style.display = 'none';
+  document.getElementById('formContainer').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function isInNZ() { return document.getElementById('addrCode').value === NZ_CODE; }
